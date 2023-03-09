@@ -6,8 +6,10 @@
 #include <hardware/adc.h>
 
 #define INT_16_MAX 32768
-#define ENCODER_RESOLUTION 48.0
-#define GEAR_RATIO 20.4
+//#define ENCODER_RESOLUTION 48.0 (original value in the code)
+#define ENCODER_RESOLUTION 20.0
+//#define GEAR_RATIO 20.4 (original value in the code)
+#define GEAR_RATIO 78.0
 #define TIMESTEP_S 1.5
 #define NUM_POINTS 25
 
