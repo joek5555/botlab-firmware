@@ -27,6 +27,7 @@ int main() {
     rc_motor_init();
     rc_encoder_init();
     blink();
+    sleep_ms(1000);
     printf("\nTesting motor 1...\n");
     int32_t d = 0;
     int encoder_reading;
@@ -35,7 +36,7 @@ int main() {
     printf("\nDuty\tSpeed\tCurrent\n");
     adc_select_input(0);
     for (; d < INT_16_MAX; d += INT_16_MAX/NUM_POINTS) {
-        rc_motor_set(1, d);
+        rc_motor_set(1, -1*d);
         encoder_reading = -rc_encoder_read_delta(1);
         wheel_speed = RPM_conversion_factor * encoder_reading;
         current_reading = 0.0;
@@ -52,7 +53,7 @@ int main() {
     printf("\nTesting motor 3...\n");
     printf("\nDuty\tSpeed\tCurrent\n");
     for (; d < INT_16_MAX; d += INT_16_MAX/NUM_POINTS) {
-        rc_motor_set(3, d);
+        rc_motor_set(3, -1*d);
         encoder_reading = -rc_encoder_read_delta(3);
         wheel_speed = RPM_conversion_factor * encoder_reading;
         current_reading = 0.0;

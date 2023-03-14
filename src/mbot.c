@@ -183,6 +183,17 @@ bool timer_cb(repeating_timer_t *rt)
          *      - Remember to clamp the orientation between [0, 2pi]!
          *************************************************************/
         float delta_d, delta_theta; // displacement in meters and rotation in radians
+        delta_theta = (enc_delta_r*enc2meters - enc_delta_l*enc2meters)/WHEEL_BASE;
+        delta_d = (enc_delta_r*enc2meters + enc_delta_l*enc2meters)/2;
+        current_odom.x = current_odom.x + delta_d * cos(current_odom.theta + delta_theta/2);
+        current_odom.y = current_odom.y + delta_d * sin(current_odom.theta + delta_theta/2);
+        current_odom.theta = current_odom.theta + delta_theta;
+        //clamp theta to between 0 and 2pi
+        current_odom.theta = fmod(current_odom.theta, 2*PI);
+        if (current_odom.theta < 0) {
+            current_odom.theta = current_odom.theta + 2*PI;
+        }
+        current_odom.utime = cur_pico_time;
 
         /*************************************************************
          * End of TODO
