@@ -24,6 +24,8 @@
 #define MAIN_LOOP_HZ 50.0 // 50 hz loop
 #define MAIN_LOOP_PERIOD (1.0f / MAIN_LOOP_HZ)
 
+
+
 // data to hold current mpu state
 static rc_mpu_data_t mpu_data;
 
@@ -148,6 +150,7 @@ bool timer_cb(repeating_timer_t *rt)
                       mbot_pid_gains.bf_rot_kd,
                       1.0 / mbot_pid_gains.bf_rot_Tf,
                       1.0 / MAIN_LOOP_HZ);
+
     }
     // only run if we've received a timesync message...
     if (comms_get_topic_data(MBOT_TIMESYNC, &received_time))
@@ -193,8 +196,8 @@ bool timer_cb(repeating_timer_t *rt)
             float measured_vel_l, measured_vel_r; // measured velocity in m/s
             float l_duty, r_duty;                 // duty cycle in range [-1, 1]
             float dt = MAIN_LOOP_PERIOD;          // time since last update in seconds
-            if (OPEN_LOOP)
-            {
+            //if (OPEN_LOOP)
+            //{
                 /*************************************************************
                  * TODO:
                  *      - Implement the open loop motor controller to compute the left
@@ -203,11 +206,55 @@ bool timer_cb(repeating_timer_t *rt)
                  *      - To compute the measured velocities, use dt as the timestep (∆t)
                  ************************************************************/
 
+            if(USER == "Joe"){
+                if(l_cmd >=0){
+                    l_duty = l_cmd * J_SLOPE_L_F + J_INTERCEPT_L_F;
+                }
+                else{
+                    l_duty = -1 * l_cmd * J_SLOPE_L_R + J_INTERCEPT_L_R;
+                }
+                if(r_cmd >=0){
+                    r_duty = r_cmd * J_SLOPE_R_F + J_INTERCEPT_R_F;
+                }
+                else{
+                    r_duty = -1 * r_cmd * J_SLOPE_R_R + J_INTERCEPT_R_R;
+                }
+            }
+            else if(USER == "Emaad"){
+                if(l_cmd >=0){
+                    l_duty = l_cmd * E_SLOPE_L_F + E_INTERCEPT_L_F;
+                }
+                else{
+                    l_duty = -1 * l_cmd * E_SLOPE_L_R + E_INTERCEPT_L_R;
+                }
+                if(r_cmd >=0){
+                    r_duty = r_cmd * E_SLOPE_R_F + E_INTERCEPT_R_F;
+                }
+                else{
+                    r_duty = -1 * r_cmd * E_SLOPE_R_R + E_INTERCEPT_R_R;
+                }
+            }
+            else if(USER == "Kamil"){
+                if(l_cmd >=0){
+                    l_duty = l_cmd * K_SLOPE_L_F + K_INTERCEPT_L_F;
+                }
+                else{
+                    l_duty = -1 * l_cmd * K_SLOPE_L_R + K_INTERCEPT_L_R;
+                }
+                if(r_cmd >=0){
+                    r_duty = r_cmd * K_SLOPE_R_F + K_INTERCEPT_R_F;
+                }
+                else{
+                    r_duty = -1 * r_cmd * K_SLOPE_R_R + K_INTERCEPT_R_R;
+                }
+            }
+                
+
                 /*************************************************************
                  * End of TODO
                  *************************************************************/
-            }
-            else
+            //}
+            if(OPEN_LOOP == 0)
             {
                 /*************************************************************
                  * TODO:
@@ -232,6 +279,24 @@ bool timer_cb(repeating_timer_t *rt)
                  ************************************************************/
                 float fwd_sp, turn_sp;                     // forward and turn setpoints in m/s and rad/s
                 float measured_vel_fwd, measured_vel_turn; // measured forward and turn velocities in m/s and rad/s
+
+                // calculate desired left and right motor speed
+                float left_target_velocity = (current_cmd.angular_v*WHEEL_BASE + 2*current_cmd.trans_v)/(-2);
+                float right_target_velocity = (current_cmd.angular_v*WHEEL_BASE + 2*current_cmd.trans_v)/(2);
+                // calculate left and right motor speed
+                float left_velocity = (2 * PI * ((enc_delta_l / ENCODER_RESOLUTION)/GEAR_RATIO)) / dt;
+                float right_velocity = (2 * PI * ((enc_delta_r / ENCODER_RESOLUTION)/GEAR_RATIO)) / dt;
+                
+                // calculate error
+                float left_error = left_velocity - left_target_velocity;
+                float right_error = right_velocity - right_target_velocity;
+                // calculate pid delta and add to previously calculated duty cycles
+                // duty was calculated using just calibration
+                float left_pid_delta = rc_filter_march(&left_pid, left_error);
+                l_duty = l_duty + left_pid_delta;
+
+                float right_pid_delta = rc_filter_march(&right_pid, right_error);
+                r_duty = r_duty + right_pid_delta;
 
                 /**
                  *  Example closed loop controller
@@ -370,6 +435,9 @@ int main()
 
     // Example of setting limits to the output of the filter
     // rc_filter_enable_saturation(&my_filter, min_val, max_val);
+
+
+
 
     /*************************************************************
      * End of TODO

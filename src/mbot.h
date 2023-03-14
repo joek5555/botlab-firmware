@@ -22,6 +22,14 @@
 #include <math.h>
 #include <inttypes.h>
 
+
+// who is using the code
+#define USER "Joe"
+
+#define ENCODER_RESOLUTION 20.0
+#define GEAR_RATIO 78.0
+
+
 // Hardware info
 #define MAX_FWD_VEL 0.8 // max forward speed (m/s)
 #define MESSAGE_CONFIRMATION_CHANNEL "MSG_CONFIRM"
@@ -34,10 +42,32 @@
 #define RIGHT_MOTOR_POL -1
 
 // TODO: Populate with calibration data (recommended to generate these for reverse direction as well)
-#define SLOPE_L 1.0
-#define SLOPE_R 1.0
-#define INTERCEPT_L -0.0
-#define INTERCEPT_R -0.0
+#define J_SLOPE_L_F 0.0513
+#define J_SLOPE_L_R 0.0533
+#define J_SLOPE_R_F 0.052
+#define J_SLOPE_R_R 0.0521
+#define J_INTERCEPT_L_F 0.1034
+#define J_INTERCEPT_L_R 0.1066
+#define J_INTERCEPT_R_F 0.0946
+#define J_INTERCEPT_R_R 0.1031
+
+#define K_SLOPE_L_F 0.0575
+#define K_SLOPE_L_R 0.06
+#define K_SLOPE_R_F 0.0623
+#define K_SLOPE_R_R 0.0613
+#define K_INTERCEPT_L_F 0.1276
+#define K_INTERCEPT_L_R 0.1229
+#define K_INTERCEPT_R_F 0.1085
+#define K_INTERCEPT_R_R 0.1144
+
+#define E_SLOPE_L_F 0.0523
+#define E_SLOPE_L_R 0.0524
+#define E_SLOPE_R_F 0.0542
+#define E_SLOPE_R_R 0.0529
+#define E_INTERCEPT_L_F 0.0937
+#define E_INTERCEPT_L_R 0.1034
+#define E_INTERCEPT_R_F 0.0841
+#define E_INTERCEPT_R_R 0.0989
 
 // TODO: Decide which controller is used, open loop = 1, PID = 0
 #define OPEN_LOOP 1
