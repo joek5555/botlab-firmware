@@ -217,46 +217,50 @@ bool timer_cb(repeating_timer_t *rt)
                  *      - To compute the measured velocities, use dt as the timestep (∆t)
                  ************************************************************/
 
+            // calculate desired left and right motor speed
+            float left_target_velocity = (current_cmd.angular_v*WHEEL_BASE + 2*current_cmd.trans_v)/(-2);
+            float right_target_velocity = (current_cmd.angular_v*WHEEL_BASE + 2*current_cmd.trans_v)/(2);
+
             if(USER == "Joe"){
-                if(l_cmd >=0){
-                    l_duty = l_cmd * J_SLOPE_L_F + J_INTERCEPT_L_F;
+                if(left_target_velocity >=0){
+                    l_duty = left_target_velocity * J_SLOPE_L_F + J_INTERCEPT_L_F;
                 }
                 else{
-                    l_duty = -1 * l_cmd * J_SLOPE_L_R + J_INTERCEPT_L_R;
+                    l_duty = -1 * left_target_velocity * J_SLOPE_L_R + J_INTERCEPT_L_R;
                 }
-                if(r_cmd >=0){
-                    r_duty = r_cmd * J_SLOPE_R_F + J_INTERCEPT_R_F;
+                if(right_target_velocity >=0){
+                    r_duty = right_target_velocity * J_SLOPE_R_F + J_INTERCEPT_R_F;
                 }
                 else{
-                    r_duty = -1 * r_cmd * J_SLOPE_R_R + J_INTERCEPT_R_R;
+                    r_duty = -1 * right_target_velocity * J_SLOPE_R_R + J_INTERCEPT_R_R;
                 }
             }
             else if(USER == "Emaad"){
-                if(l_cmd >=0){
-                    l_duty = l_cmd * E_SLOPE_L_F + E_INTERCEPT_L_F;
+                if(left_target_velocity >=0){
+                    l_duty = left_target_velocity * E_SLOPE_L_F + E_INTERCEPT_L_F;
                 }
                 else{
-                    l_duty = -1 * l_cmd * E_SLOPE_L_R + E_INTERCEPT_L_R;
+                    l_duty = -1 * left_target_velocity * E_SLOPE_L_R + E_INTERCEPT_L_R;
                 }
-                if(r_cmd >=0){
-                    r_duty = r_cmd * E_SLOPE_R_F + E_INTERCEPT_R_F;
+                if(right_target_velocity >=0){
+                    r_duty = right_target_velocity * E_SLOPE_R_F + E_INTERCEPT_R_F;
                 }
                 else{
-                    r_duty = -1 * r_cmd * E_SLOPE_R_R + E_INTERCEPT_R_R;
+                    r_duty = -1 * right_target_velocity * E_SLOPE_R_R + E_INTERCEPT_R_R;
                 }
             }
             else if(USER == "Kamil"){
-                if(l_cmd >=0){
-                    l_duty = l_cmd * K_SLOPE_L_F + K_INTERCEPT_L_F;
+                if(left_target_velocity >=0){
+                    l_duty = left_target_velocity * K_SLOPE_L_F + K_INTERCEPT_L_F;
                 }
                 else{
-                    l_duty = -1 * l_cmd * K_SLOPE_L_R + K_INTERCEPT_L_R;
+                    l_duty = -1 * left_target_velocity * K_SLOPE_L_R + K_INTERCEPT_L_R;
                 }
-                if(r_cmd >=0){
-                    r_duty = r_cmd * K_SLOPE_R_F + K_INTERCEPT_R_F;
+                if(right_target_velocity >=0){
+                    r_duty = right_target_velocity * K_SLOPE_R_F + K_INTERCEPT_R_F;
                 }
                 else{
-                    r_duty = -1 * r_cmd * K_SLOPE_R_R + K_INTERCEPT_R_R;
+                    r_duty = -1 * right_target_velocity * K_SLOPE_R_R + K_INTERCEPT_R_R;
                 }
             }
                 
@@ -291,9 +295,7 @@ bool timer_cb(repeating_timer_t *rt)
                 float fwd_sp, turn_sp;                     // forward and turn setpoints in m/s and rad/s
                 float measured_vel_fwd, measured_vel_turn; // measured forward and turn velocities in m/s and rad/s
 
-                // calculate desired left and right motor speed
-                float left_target_velocity = (current_cmd.angular_v*WHEEL_BASE + 2*current_cmd.trans_v)/(-2);
-                float right_target_velocity = (current_cmd.angular_v*WHEEL_BASE + 2*current_cmd.trans_v)/(2);
+                
                 // calculate left and right motor speed
                 float left_velocity = (2 * PI * ((enc_delta_l / ENCODER_RESOLUTION)/GEAR_RATIO)) / dt;
                 float right_velocity = (2 * PI * ((enc_delta_r / ENCODER_RESOLUTION)/GEAR_RATIO)) / dt;
