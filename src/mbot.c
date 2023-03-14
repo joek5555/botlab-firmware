@@ -218,17 +218,23 @@ bool timer_cb(repeating_timer_t *rt)
                  ************************************************************/
 
             // calculate desired left and right motor speed
-            float left_target_velocity = (current_cmd.angular_v*WHEEL_BASE + 2*current_cmd.trans_v)/(-2 * WHEEL_RADIUS);
+            float left_target_velocity = (current_cmd.angular_v*WHEEL_BASE - 2*current_cmd.trans_v)/(-2 * WHEEL_RADIUS);
             float right_target_velocity = (current_cmd.angular_v*WHEEL_BASE + 2*current_cmd.trans_v)/(2 * WHEEL_RADIUS);
 
             if(USER == "Joe"){
-                if(left_target_velocity >=0){
+                if(left_target_velocity < SLOWEST_SPEED && left_target_velocity > - SLOWEST_SPEED){
+                    l_duty = 0;
+                }
+                else if(left_target_velocity >=SLOWEST_SPEED){
                     l_duty = left_target_velocity * J_SLOPE_L_F + J_INTERCEPT_L_F;
                 }
                 else{
                     l_duty = -1*(-1 * left_target_velocity * J_SLOPE_L_R + J_INTERCEPT_L_R);
                 }
-                if(right_target_velocity >=0){
+                if(right_target_velocity < SLOWEST_SPEED && right_target_velocity > - SLOWEST_SPEED){
+                    r_duty = 0;
+                }
+                else if(right_target_velocity >=SLOWEST_SPEED){
                     r_duty = right_target_velocity * J_SLOPE_R_F + J_INTERCEPT_R_F;
                 }
                 else{
@@ -236,13 +242,19 @@ bool timer_cb(repeating_timer_t *rt)
                 }
             }
             else if(USER == "Emaad"){
-                if(left_target_velocity >=0){
+                if(left_target_velocity < SLOWEST_SPEED && left_target_velocity > - SLOWEST_SPEED){
+                    l_duty = 0;
+                }
+                else if(left_target_velocity >=SLOWEST_SPEED){
                     l_duty = left_target_velocity * E_SLOPE_L_F + E_INTERCEPT_L_F;
                 }
                 else{
                     l_duty = -1*(-1 * left_target_velocity * E_SLOPE_L_R + E_INTERCEPT_L_R);
                 }
-                if(right_target_velocity >=0){
+                if(right_target_velocity < SLOWEST_SPEED && right_target_velocity > - SLOWEST_SPEED){
+                    r_duty = 0;
+                }
+                else if(right_target_velocity >=SLOWEST_SPEED){
                     r_duty = right_target_velocity * E_SLOPE_R_F + E_INTERCEPT_R_F;
                 }
                 else{
@@ -250,13 +262,19 @@ bool timer_cb(repeating_timer_t *rt)
                 }
             }
             else if(USER == "Kamil"){
-                if(left_target_velocity >=0){
+                if(left_target_velocity < SLOWEST_SPEED && left_target_velocity > - SLOWEST_SPEED){
+                    l_duty = 0;
+                }
+                else if(left_target_velocity >=SLOWEST_SPEED){
                     l_duty = left_target_velocity * K_SLOPE_L_F + K_INTERCEPT_L_F;
                 }
                 else{
                     l_duty = -1*(-1 * left_target_velocity * K_SLOPE_L_R + K_INTERCEPT_L_R);
                 }
-                if(right_target_velocity >=0){
+                if(right_target_velocity < SLOWEST_SPEED && right_target_velocity > - SLOWEST_SPEED){
+                    r_duty = 0;
+                }
+                else if(right_target_velocity >=SLOWEST_SPEED){
                     r_duty = right_target_velocity * K_SLOPE_R_F + K_INTERCEPT_R_F;
                 }
                 else{
