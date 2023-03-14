@@ -218,8 +218,8 @@ bool timer_cb(repeating_timer_t *rt)
                  ************************************************************/
 
             // calculate desired left and right motor speed
-            float left_target_velocity = (current_cmd.angular_v*WHEEL_BASE + 2*current_cmd.trans_v)/(-2);
-            float right_target_velocity = (current_cmd.angular_v*WHEEL_BASE + 2*current_cmd.trans_v)/(2);
+            float left_target_velocity = (current_cmd.angular_v*WHEEL_BASE + 2*current_cmd.trans_v)/(-2 * WHEEL_RADIUS);
+            float right_target_velocity = (current_cmd.angular_v*WHEEL_BASE + 2*current_cmd.trans_v)/(2 * WHEEL_RADIUS);
 
             if(USER == "Joe"){
                 if(left_target_velocity >=0){
