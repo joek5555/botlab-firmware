@@ -226,13 +226,13 @@ bool timer_cb(repeating_timer_t *rt)
                     l_duty = left_target_velocity * J_SLOPE_L_F + J_INTERCEPT_L_F;
                 }
                 else{
-                    l_duty = -1 * left_target_velocity * J_SLOPE_L_R + J_INTERCEPT_L_R;
+                    l_duty = -1*(-1 * left_target_velocity * J_SLOPE_L_R + J_INTERCEPT_L_R);
                 }
                 if(right_target_velocity >=0){
                     r_duty = right_target_velocity * J_SLOPE_R_F + J_INTERCEPT_R_F;
                 }
                 else{
-                    r_duty = -1 * right_target_velocity * J_SLOPE_R_R + J_INTERCEPT_R_R;
+                    r_duty = -1*(-1 * right_target_velocity * J_SLOPE_R_R + J_INTERCEPT_R_R);
                 }
             }
             else if(USER == "Emaad"){
@@ -240,13 +240,13 @@ bool timer_cb(repeating_timer_t *rt)
                     l_duty = left_target_velocity * E_SLOPE_L_F + E_INTERCEPT_L_F;
                 }
                 else{
-                    l_duty = -1 * left_target_velocity * E_SLOPE_L_R + E_INTERCEPT_L_R;
+                    l_duty = -1*(-1 * left_target_velocity * E_SLOPE_L_R + E_INTERCEPT_L_R);
                 }
                 if(right_target_velocity >=0){
                     r_duty = right_target_velocity * E_SLOPE_R_F + E_INTERCEPT_R_F;
                 }
                 else{
-                    r_duty = -1 * right_target_velocity * E_SLOPE_R_R + E_INTERCEPT_R_R;
+                    r_duty = -1*(-1 * right_target_velocity * E_SLOPE_R_R + E_INTERCEPT_R_R);
                 }
             }
             else if(USER == "Kamil"){
@@ -254,13 +254,13 @@ bool timer_cb(repeating_timer_t *rt)
                     l_duty = left_target_velocity * K_SLOPE_L_F + K_INTERCEPT_L_F;
                 }
                 else{
-                    l_duty = -1 * left_target_velocity * K_SLOPE_L_R + K_INTERCEPT_L_R;
+                    l_duty = -1*(-1 * left_target_velocity * K_SLOPE_L_R + K_INTERCEPT_L_R);
                 }
                 if(right_target_velocity >=0){
                     r_duty = right_target_velocity * K_SLOPE_R_F + K_INTERCEPT_R_F;
                 }
                 else{
-                    r_duty = -1 * right_target_velocity * K_SLOPE_R_R + K_INTERCEPT_R_R;
+                    r_duty = -1*(-1 * right_target_velocity * K_SLOPE_R_R + K_INTERCEPT_R_R);
                 }
             }
                 
