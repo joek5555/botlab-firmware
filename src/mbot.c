@@ -290,8 +290,7 @@ bool timer_cb(repeating_timer_t *rt)
                 else{
                     r_duty = -1*(-1 * right_target_velocity * K_SLOPE_R_R + K_INTERCEPT_R_R);
                 }
-            }
-                
+            }    
 
                 /*************************************************************
                  * End of TODO

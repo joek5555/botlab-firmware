@@ -28,7 +28,7 @@
 
 #define ENCODER_RESOLUTION 20.0
 #define GEAR_RATIO 78.0
-#define SLOWEST_SPEED  0.001
+#define SLOWEST_SPEED 0.001
 
 // Hardware info
 #define MAX_FWD_VEL 0.8 // max forward speed (m/s)
