@@ -28,7 +28,7 @@
 
 #define ENCODER_RESOLUTION 20.0
 #define GEAR_RATIO 78.0
-#define SLOWEST_SPEED = 0.001
+#define SLOWEST_SPEED  0.001
 
 // Hardware info
 #define MAX_FWD_VEL 0.8 // max forward speed (m/s)
@@ -70,7 +70,7 @@
 #define E_INTERCEPT_R_R 0.0989
 
 // TODO: Decide which controller is used, open loop = 1, PID = 0
-#define OPEN_LOOP 1
+#define OPEN_LOOP 0
 
 // data to hold current mpu state (not used)
 static rc_mpu_data_t mpu_data;
@@ -130,12 +130,18 @@ pid_parameters_t left_pid_params = {
     .kd = 0.0,
     .dFilterHz = 25.0,
 };
+#define left_pid_max 0.5
+#define left_pid_min -0.5
+
 pid_parameters_t right_pid_params = {
     .kp = 1.0,
     .ki = 0.0,
     .kd = 0.0,
     .dFilterHz = 25.0,
 };
+#define right_pid_max 0.5
+#define right_pid_min -0.5
+
 pid_parameters_t fwd_vel_pid_params = {
     .kp = 1.0,
     .ki = 0.0,
