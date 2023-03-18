@@ -325,8 +325,8 @@ bool timer_cb(repeating_timer_t *rt)
                 float fwd_sp, turn_sp;                     // forward and turn setpoints in m/s and rad/s
                 float measured_vel_fwd, measured_vel_turn; // measured forward and turn velocities in m/s and rad/s
                 
-                enc_delta_l = rc_filter_march(&encoder_lowpass, enc_delta_l);
-                enc_delta_r = rc_filter_march(&encoder_lowpass, enc_delta_l);
+                // enc_delta_l = rc_filter_march(&encoder_lowpass, enc_delta_l);
+                // enc_delta_r = rc_filter_march(&encoder_lowpass, enc_delta_l);
                 
                 // calculate left and right motor speed
                 float left_velocity = (2 * PI * ((enc_delta_l / ENCODER_RESOLUTION)/GEAR_RATIO)) / dt;
