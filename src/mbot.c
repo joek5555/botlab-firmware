@@ -197,16 +197,27 @@ bool timer_cb(repeating_timer_t *rt)
         float delta_d, delta_theta; // displacement in meters and rotation in radians
         delta_theta = (enc_delta_r*enc2meters - enc_delta_l*enc2meters)/WHEEL_BASE;
         delta_d = (enc_delta_r*enc2meters + enc_delta_l*enc2meters)/2;
-        current_odom.x = current_odom.x + delta_d * cos(current_odom.theta + delta_theta/2);
-        current_odom.y = current_odom.y + delta_d * sin(current_odom.theta + delta_theta/2);
-        current_odom.theta = current_odom.theta + delta_theta;
+        
+        //Get IMU data
+        float curr_theta_gyro = mpu_data.fused_TaitBryan[3];
+        float delta_theta_gyro = curr_theta_gyro - prev_theta_gyro;
+        prev_theta_gyro = curr_theta_gyro;
+        //Gyrodometry to update x,y,theta
+        if (fabsf(delta_theta_gyro - delta_theta) >= 0.01) {
+            current_odom.x = current_odom.x + delta_d * cos(current_odom.theta + delta_theta_gyro/2);
+            current_odom.y = current_odom.y + delta_d * sin(current_odom.theta + delta_theta_gyro/2);
+            current_odom.theta = current_odom.theta + delta_theta_gyro;
+        } else {
+            current_odom.x = current_odom.x + delta_d * cos(current_odom.theta + delta_theta/2);
+            current_odom.y = current_odom.y + delta_d * sin(current_odom.theta + delta_theta/2);
+            current_odom.theta = current_odom.theta + delta_theta;
+        }
         //clamp theta to between 0 and 2pi
         current_odom.theta = fmod(current_odom.theta, 2*PI);
         if (current_odom.theta < 0) {
             current_odom.theta = current_odom.theta + 2*PI;
         }
         current_odom.utime = cur_pico_time;
-
         /*************************************************************
          * End of TODO
          *************************************************************/
@@ -292,8 +303,7 @@ bool timer_cb(repeating_timer_t *rt)
                 else{
                     r_duty = -1*(-1 * right_target_velocity * K_SLOPE_R_R + K_INTERCEPT_R_R);
                 }
-            }
-                
+            }    
 
                 /*************************************************************
                  * End of TODO
