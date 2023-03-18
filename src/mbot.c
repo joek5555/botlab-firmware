@@ -46,6 +46,8 @@ float global_right_velocity = 0.0;
 float global_right_target = 0.0;
 float global_left_target = 0.0;
 
+float prev_theta_gyro = 0.0;
+
 void timestamp_cb(timestamp_t *received_timestamp)
 {
     // if we havent set the offset yet
@@ -567,7 +569,12 @@ int main()
     while (running)
     {
         //printf("\033[2A\r|      SENSORS      |           ODOMETRY          |     SETPOINTS     |\n\r|  L_ENC  |  R_ENC  |    X    |    Y    |    θ    |   FWD   |   ANG   \n\r|%7lld  |%7lld  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |", current_encoders.leftticks, current_encoders.rightticks, current_odom.x, current_odom.y, current_odom.theta, current_cmd.trans_v, current_cmd.angular_v);
+        
+        // print for control loops
         printf("\033[2A\r|   l_cal |   l_speed |   l_target  |   l_error |   l_pid |   l_cmd |||   r_cal |   r_speed |   r_target  |   r_error |   r_pid |   r_cmd |\n\r| %7.3f |  %7.3f  |   %7.3f   |  %7.3f  | %7.3f | %7.3f ||| %7.3f |  %7.3f  |   %7.3f   |  %7.3f  | %7.3f | %7.3f |", global_left_calibration, global_left_velocity, global_left_target, global_left_error, global_left_pid_delta, global_left_duty, global_right_calibration,global_right_velocity, global_right_target, global_right_error, global_right_pid_delta, global_right_duty);
+        
+        // print for odometry
+        printf("\033[2A\r|      SENSORS      |           ODOMETRY          |     SETPOINTS     |\n\r|  L_ENC  |  R_ENC  |    X    |    Y    |    θ    |   FWD   |   ANG   \n\r|%7lld  |%7lld  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |", current_encoders.leftticks, current_encoders.rightticks, current_odom.x, current_odom.y, current_odom.theta, current_cmd.trans_v, current_cmd.angular_v);
     }
 }
 
