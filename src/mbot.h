@@ -123,10 +123,11 @@ rc_filter_t left_pid;
 rc_filter_t right_pid;
 rc_filter_t fwd_vel_pid;
 rc_filter_t turn_vel_pid;
+rc_filter_t encoder_lowpass;
 
 pid_parameters_t left_pid_params = {
-    .kp = 1.0,
-    .ki = 0.0,
+    .kp = 0.04,
+    .ki = 0.06,
     .kd = 0.0,
     .dFilterHz = 25.0,
 };
@@ -134,8 +135,8 @@ pid_parameters_t left_pid_params = {
 #define left_pid_min -0.5
 
 pid_parameters_t right_pid_params = {
-    .kp = 1.0,
-    .ki = 0.0,
+    .kp = 0.04,
+    .ki = 0.06,
     .kd = 0.0,
     .dFilterHz = 25.0,
 };

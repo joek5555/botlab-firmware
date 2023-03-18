@@ -21,7 +21,7 @@
 #include "mbot.h"
 
 #define LED_PIN 25
-#define MAIN_LOOP_HZ 20.0 // 50 hz loop
+#define MAIN_LOOP_HZ 20.0 // 20 hz loop
 #define MAIN_LOOP_PERIOD (1.0f / MAIN_LOOP_HZ)
 
 
@@ -43,7 +43,8 @@ float global_left_duty = 0.0;
 float global_right_duty = 0.0;
 float global_left_velocity = 0.0;
 float global_right_velocity = 0.0;
-float prev_theta_gyro = 0.0;
+float global_right_target = 0.0;
+float global_left_target = 0.0;
 
 void timestamp_cb(timestamp_t *received_timestamp)
 {
@@ -333,7 +334,9 @@ bool timer_cb(repeating_timer_t *rt)
                  ************************************************************/
                 float fwd_sp, turn_sp;                     // forward and turn setpoints in m/s and rad/s
                 float measured_vel_fwd, measured_vel_turn; // measured forward and turn velocities in m/s and rad/s
-
+                
+                // enc_delta_l = rc_filter_march(&encoder_lowpass, enc_delta_l);
+                // enc_delta_r = rc_filter_march(&encoder_lowpass, enc_delta_l);
                 
                 // calculate left and right motor speed
                 float left_velocity = (2 * PI * ((enc_delta_l / ENCODER_RESOLUTION)/GEAR_RATIO)) / dt;
@@ -341,6 +344,8 @@ bool timer_cb(repeating_timer_t *rt)
 
                 global_left_velocity = left_velocity;
                 global_right_velocity = right_velocity;
+                global_left_target = left_target_velocity;
+                global_right_target = right_target_velocity;
                 
                 // calculate error
                 float left_error = left_target_velocity - left_velocity;
@@ -351,10 +356,17 @@ bool timer_cb(repeating_timer_t *rt)
                 global_right_calibration = r_duty; 
 
                 float left_pid_delta = rc_filter_march(&left_pid, left_error);
-                //l_duty = l_duty + left_pid_delta;                
+                if(left_target_velocity > SLOWEST_SPEED || left_target_velocity < -SLOWEST_SPEED){ // if target speed is not 0, apply pid delta
+                    l_duty = l_duty + left_pid_delta; 
+                }
+                
+                               
 
                 float right_pid_delta = rc_filter_march(&right_pid, right_error);
-                //r_duty = r_duty + right_pid_delta;
+                if(right_target_velocity > SLOWEST_SPEED || right_target_velocity < -SLOWEST_SPEED){ // if target speed is not 0, apply pid delta
+                    r_duty = r_duty + right_pid_delta;
+                }
+                
 
                 global_left_pid_delta = left_pid_delta;
                 global_right_pid_delta = right_pid_delta;
@@ -503,6 +515,7 @@ int main()
     // rc_filter_enable_saturation(&my_filter, min_val, max_val);
     left_pid = rc_filter_empty();
     right_pid = rc_filter_empty();
+    encoder_lowpass = rc_filter_empty();
 
     rc_filter_pid(&left_pid,
                 left_pid_params.kp,
@@ -534,6 +547,9 @@ int main()
                 1.0 / turn_vel_pid_params.dFilterHz,
                 1.0 / MAIN_LOOP_HZ);
 
+    rc_filter_first_order_lowpass(&encoder_lowpass,
+                                    1.0 / MAIN_LOOP_HZ,
+                                    0.1);
 
     /*************************************************************
      * End of TODO
@@ -550,8 +566,8 @@ int main()
 
     while (running)
     {
-        printf("\033[2A\r|      SENSORS      |           ODOMETRY          |     SETPOINTS     |\n\r|  L_ENC  |  R_ENC  |    X    |    Y    |    θ    |   FWD   |   ANG   \n\r|%7lld  |%7lld  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |", current_encoders.leftticks, current_encoders.rightticks, current_odom.x, current_odom.y, current_odom.theta, current_cmd.trans_v, current_cmd.angular_v);
-        //printf("\033[2A\r|  l_cal  |  r_cal  | l_speed | r_speed| l_error |   l_pid  |   l_cmd | r_error  |   r_pid |  r_cmd   |\n\r|%7.3f   |%7.3f   |%7.3f  |%7.3f | %7.3f  |%7.3f  |%7.3f  |%7.3f  |%7.3f |%7.3f  |", global_left_calibration, global_right_calibration, global_left_velocity, global_right_velocity, global_left_error, global_left_pid_delta, global_left_duty, global_right_error, global_right_pid_delta, global_right_duty);
+        //printf("\033[2A\r|      SENSORS      |           ODOMETRY          |     SETPOINTS     |\n\r|  L_ENC  |  R_ENC  |    X    |    Y    |    θ    |   FWD   |   ANG   \n\r|%7lld  |%7lld  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |", current_encoders.leftticks, current_encoders.rightticks, current_odom.x, current_odom.y, current_odom.theta, current_cmd.trans_v, current_cmd.angular_v);
+        printf("\033[2A\r|   l_cal |   l_speed |   l_target  |   l_error |   l_pid |   l_cmd |||   r_cal |   r_speed |   r_target  |   r_error |   r_pid |   r_cmd |\n\r| %7.3f |  %7.3f  |   %7.3f   |  %7.3f  | %7.3f | %7.3f ||| %7.3f |  %7.3f  |   %7.3f   |  %7.3f  | %7.3f | %7.3f |", global_left_calibration, global_left_velocity, global_left_target, global_left_error, global_left_pid_delta, global_left_duty, global_right_calibration,global_right_velocity, global_right_target, global_right_error, global_right_pid_delta, global_right_duty);
     }
 }
 
