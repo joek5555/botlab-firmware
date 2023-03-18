@@ -21,7 +21,7 @@
 #include "mbot.h"
 
 #define LED_PIN 25
-#define MAIN_LOOP_HZ 20.0 // 50 hz loop
+#define MAIN_LOOP_HZ 20.0 // 20 hz loop
 #define MAIN_LOOP_PERIOD (1.0f / MAIN_LOOP_HZ)
 
 
@@ -324,7 +324,9 @@ bool timer_cb(repeating_timer_t *rt)
                  ************************************************************/
                 float fwd_sp, turn_sp;                     // forward and turn setpoints in m/s and rad/s
                 float measured_vel_fwd, measured_vel_turn; // measured forward and turn velocities in m/s and rad/s
-
+                
+                enc_delta_l = rc_filter_march(&encoder_lowpass, enc_delta_l);
+                enc_delta_r = rc_filter_march(&encoder_lowpass, enc_delta_l);
                 
                 // calculate left and right motor speed
                 float left_velocity = (2 * PI * ((enc_delta_l / ENCODER_RESOLUTION)/GEAR_RATIO)) / dt;
@@ -503,6 +505,7 @@ int main()
     // rc_filter_enable_saturation(&my_filter, min_val, max_val);
     left_pid = rc_filter_empty();
     right_pid = rc_filter_empty();
+    encoder_lowpass = rc_filter_empty();
 
     rc_filter_pid(&left_pid,
                 left_pid_params.kp,
@@ -534,6 +537,9 @@ int main()
                 1.0 / turn_vel_pid_params.dFilterHz,
                 1.0 / MAIN_LOOP_HZ);
 
+    rc_filter_first_order_lowpass(&encoder_lowpass,
+                                    1.0 / MAIN_LOOP_HZ,
+                                    0.1);
 
     /*************************************************************
      * End of TODO
