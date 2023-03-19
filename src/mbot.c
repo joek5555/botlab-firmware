@@ -132,6 +132,10 @@ bool timer_cb(repeating_timer_t *rt)
                mbot_pid_gains.motor_a_ki,
                mbot_pid_gains.motor_a_kd,
                1.0 / mbot_pid_gains.motor_a_Tf);
+        printf("right: %f, %f, %f, %f", mbot_pid_gains.motor_c_kp,
+               mbot_pid_gains.motor_c_ki,
+               mbot_pid_gains.motor_c_kd,
+               1.0 / mbot_pid_gains.motor_c_Tf);
 
         // update the PID gains of the left motor PID controller
         rc_filter_pid(&left_pid,
@@ -335,7 +339,7 @@ bool timer_cb(repeating_timer_t *rt)
                  *          the wheel speed PID (these should be written in lines above
                  *          the previous controller)
                  *      - Update and the fwd_sp and turn_sp variables for this.
-                 *
+                 *i
                  ************************************************************/
                 float fwd_sp, turn_sp;                     // forward and turn setpoints in m/s and rad/s
                 float measured_vel_fwd, measured_vel_turn; // measured forward and turn velocities in m/s and rad/s
@@ -412,6 +416,10 @@ bool timer_cb(repeating_timer_t *rt)
         comms_write_topic(ODOMETRY, &current_odom);
         // write the IMU to serial
         comms_write_topic(MBOT_IMU, &current_imu);
+
+        mbot_pid_gains_t pids = {0};
+        pids.motor_b_kp = 10.2;
+        comms_write_topic(MBOT_PIDS, &pids);
         uint64_t fn_run_len = to_us_since_boot(get_absolute_time()) + timestamp_offset - cur_pico_time;
     }
 
@@ -584,10 +592,10 @@ int main()
         //printf("\033[2A\r|      SENSORS      |           ODOMETRY          |     SETPOINTS     |\n\r|  L_ENC  |  R_ENC  |    X    |    Y    |    θ    |   FWD   |   ANG   \n\r|%7lld  |%7lld  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |", current_encoders.leftticks, current_encoders.rightticks, current_odom.x, current_odom.y, current_odom.theta, current_cmd.trans_v, current_cmd.angular_v);
         
         // print for control loops
-        printf("\033[2A\r|   l_cal |   l_speed |   l_target  |   l_error |   l_pid |   l_cmd |||   r_cal |   r_speed |   r_target  |   r_error |   r_pid |   r_cmd |\n\r| %7.3f |  %7.3f  |   %7.3f   |  %7.3f  | %7.3f | %7.3f ||| %7.3f |  %7.3f  |   %7.3f   |  %7.3f  | %7.3f | %7.3f |", global_left_calibration, global_left_velocity, global_left_target, global_left_error, global_left_pid_delta, global_left_duty, global_right_calibration,global_right_velocity, global_right_target, global_right_error, global_right_pid_delta, global_right_duty);
+        //printf("\033[2A\r|   l_cal |   l_speed |   l_target  |   l_error |   l_pid |   l_cmd |||   r_cal |   r_speed |   r_target  |   r_error |   r_pid |   r_cmd |\n\r| %7.3f |  %7.3f  |   %7.3f   |  %7.3f  | %7.3f | %7.3f ||| %7.3f |  %7.3f  |   %7.3f   |  %7.3f  | %7.3f | %7.3f |", global_left_calibration, global_left_velocity, global_left_target, global_left_error, global_left_pid_delta, global_left_duty, global_right_calibration,global_right_velocity, global_right_target, global_right_error, global_right_pid_delta, global_right_duty);
         
         // print for odometry
-        printf("\033[2A\r|      SENSORS      |           ODOMETRY          |     SETPOINTS     |\n\r|  L_ENC  |  R_ENC  |    X    |    Y    |    θ    |   FWD   |   ANG   \n\r|%7lld  |%7lld  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |", current_encoders.leftticks, current_encoders.rightticks, current_odom.x, current_odom.y, current_odom.theta, current_cmd.trans_v, current_cmd.angular_v);
+        //printf("\033[2A\r|      SENSORS      |           ODOMETRY          |     SETPOINTS     |\n\r|  L_ENC  |  R_ENC  |    X    |    Y    |    θ    |   FWD   |   ANG   \n\r|%7lld  |%7lld  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |", current_encoders.leftticks, current_encoders.rightticks, current_odom.x, current_odom.y, current_odom.theta, current_cmd.trans_v, current_cmd.angular_v);
     }
 }
 

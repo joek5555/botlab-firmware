@@ -128,8 +128,8 @@ rc_filter_t setpoint_left_lowpass;
 rc_filter_t setpoint_right_lowpass;
 
 pid_parameters_t left_pid_params = {
-    .kp = 0.04,
-    .ki = 0.06,
+    .kp = 0.0225,
+    .ki = 0.0225,
     .kd = 0.0,
     .dFilterHz = 25.0,
 };
@@ -137,8 +137,8 @@ pid_parameters_t left_pid_params = {
 #define left_pid_min -0.5
 
 pid_parameters_t right_pid_params = {
-    .kp = 0.04,
-    .ki = 0.06,
+    .kp = 0.0225,
+    .ki = 0.0225,
     .kd = 0.0,
     .dFilterHz = 25.0,
 };
