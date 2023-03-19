@@ -246,6 +246,9 @@ bool timer_cb(repeating_timer_t *rt)
             float left_target_velocity = (current_cmd.angular_v*WHEEL_BASE - 2*current_cmd.trans_v)/(-2 * WHEEL_RADIUS);
             float right_target_velocity = (current_cmd.angular_v*WHEEL_BASE + 2*current_cmd.trans_v)/(2 * WHEEL_RADIUS);
 
+            left_target_velocity = rc_filter_march(&setpoint_left_lowpass, left_target_velocity);
+            right_target_velocity = rc_filter_march(&setpoint_right_lowpass, right_target_velocity);
+
             if(USER == "Joe"){
                 if(left_target_velocity < SLOWEST_SPEED && left_target_velocity > - SLOWEST_SPEED){
                     l_duty = 0;
@@ -518,6 +521,8 @@ int main()
     left_pid = rc_filter_empty();
     right_pid = rc_filter_empty();
     encoder_lowpass = rc_filter_empty();
+    setpoint_left_lowpass = rc_filter_empty();
+    setpoint_right_lowpass = rc_filter_empty();
 
     rc_filter_pid(&left_pid,
                 left_pid_params.kp,
@@ -552,6 +557,14 @@ int main()
     rc_filter_first_order_lowpass(&encoder_lowpass,
                                     1.0 / MAIN_LOOP_HZ,
                                     0.1);
+    
+    rc_filter_first_order_lowpass(&setpoint_left_lowpass,
+                                    1.0 / MAIN_LOOP_HZ,
+                                    0.5);
+    
+    rc_filter_first_order_lowpass(&setpoint_right_lowpass,
+                                    1.0 / MAIN_LOOP_HZ,
+                                    0.5);
 
     /*************************************************************
      * End of TODO

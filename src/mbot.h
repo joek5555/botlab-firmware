@@ -124,6 +124,8 @@ rc_filter_t right_pid;
 rc_filter_t fwd_vel_pid;
 rc_filter_t turn_vel_pid;
 rc_filter_t encoder_lowpass;
+rc_filter_t setpoint_left_lowpass;
+rc_filter_t setpoint_right_lowpass;
 
 pid_parameters_t left_pid_params = {
     .kp = 0.04,
