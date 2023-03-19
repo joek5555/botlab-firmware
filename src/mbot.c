@@ -205,7 +205,7 @@ bool timer_cb(repeating_timer_t *rt)
         float delta_theta_gyro = curr_theta_gyro - prev_theta_gyro;
         prev_theta_gyro = curr_theta_gyro;
         //Gyrodometry to update x,y,theta
-        if (fabsf(delta_theta_gyro - delta_theta) >= 0.01) {
+        if (fabsf(delta_theta_gyro - delta_theta) > 0.05) {
             current_odom.x = current_odom.x + delta_d * cos(current_odom.theta + delta_theta_gyro/2);
             current_odom.y = current_odom.y + delta_d * sin(current_odom.theta + delta_theta_gyro/2);
             current_odom.theta = current_odom.theta + delta_theta_gyro;
