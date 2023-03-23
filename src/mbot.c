@@ -127,6 +127,7 @@ bool timer_cb(repeating_timer_t *rt)
     if (comms_get_topic_data(MBOT_PIDS, &mbot_pid_gains))
     {
         uint64_t msg_time = current_pico_time;
+        /*
         // Print the PID values
         printf("Left: %f, %f, %f, %f", mbot_pid_gains.motor_a_kp,
                mbot_pid_gains.motor_a_ki,
@@ -164,6 +165,8 @@ bool timer_cb(repeating_timer_t *rt)
                       mbot_pid_gains.bf_rot_kd,
                       1.0 / mbot_pid_gains.bf_rot_Tf,
                       1.0 / MAIN_LOOP_HZ);
+
+        */
 
     }
     // only run if we've received a timesync message...
@@ -246,8 +249,8 @@ bool timer_cb(repeating_timer_t *rt)
             float left_target_velocity = (current_cmd.angular_v*WHEEL_BASE - 2*current_cmd.trans_v)/(-2 * WHEEL_RADIUS);
             float right_target_velocity = (current_cmd.angular_v*WHEEL_BASE + 2*current_cmd.trans_v)/(2 * WHEEL_RADIUS);
 
-            left_target_velocity = rc_filter_march(&setpoint_left_lowpass, left_target_velocity);
-            right_target_velocity = rc_filter_march(&setpoint_right_lowpass, right_target_velocity);
+            //left_target_velocity = rc_filter_march(&setpoint_left_lowpass, left_target_velocity);
+            //right_target_velocity = rc_filter_march(&setpoint_right_lowpass, right_target_velocity);
 
             if(USER == "Joe"){
                 if(left_target_velocity < SLOWEST_SPEED && left_target_velocity > - SLOWEST_SPEED){
@@ -362,14 +365,14 @@ bool timer_cb(repeating_timer_t *rt)
 
                 float left_pid_delta = rc_filter_march(&left_pid, left_error);
                 if(left_target_velocity > SLOWEST_SPEED || left_target_velocity < -SLOWEST_SPEED){ // if target speed is not 0, apply pid delta
-                    l_duty = l_duty + left_pid_delta; 
+                    l_duty = l_duty*0.9 + left_pid_delta; 
                 }
                 
                                
 
                 float right_pid_delta = rc_filter_march(&right_pid, right_error);
                 if(right_target_velocity > SLOWEST_SPEED || right_target_velocity < -SLOWEST_SPEED){ // if target speed is not 0, apply pid delta
-                    r_duty = r_duty + right_pid_delta;
+                    r_duty = r_duty*0.9 + right_pid_delta;
                 }
                 
 
@@ -530,6 +533,9 @@ int main()
                 left_pid_params.kd,
                 1.0 / left_pid_params.dFilterHz,
                 1.0 / MAIN_LOOP_HZ);
+                printf("left pid p: %f", left_pid_params.kp);
+                printf("left pid i: %f", left_pid_params.ki);
+                printf("left pid d: %f", left_pid_params.kd);
     rc_filter_enable_saturation(&left_pid, left_pid_min, left_pid_max);
 
     rc_filter_pid(&right_pid,
@@ -538,6 +544,9 @@ int main()
                 right_pid_params.kd,
                 1.0 / right_pid_params.dFilterHz,
                 1.0 / MAIN_LOOP_HZ);
+                printf("right pid p: %f", right_pid_params.kp);
+                printf("right pid i: %f", right_pid_params.ki);
+                printf("right pid d: %f", right_pid_params.kd);
     rc_filter_enable_saturation(&right_pid, right_pid_min, right_pid_max);
 
     rc_filter_pid(&fwd_vel_pid,
@@ -584,10 +593,10 @@ int main()
         //printf("\033[2A\r|      SENSORS      |           ODOMETRY          |     SETPOINTS     |\n\r|  L_ENC  |  R_ENC  |    X    |    Y    |    θ    |   FWD   |   ANG   \n\r|%7lld  |%7lld  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |", current_encoders.leftticks, current_encoders.rightticks, current_odom.x, current_odom.y, current_odom.theta, current_cmd.trans_v, current_cmd.angular_v);
         
         // print for control loops
-        printf("\033[2A\r|   l_cal |   l_speed |   l_target  |   l_error |   l_pid |   l_cmd |||   r_cal |   r_speed |   r_target  |   r_error |   r_pid |   r_cmd |\n\r| %7.3f |  %7.3f  |   %7.3f   |  %7.3f  | %7.3f | %7.3f ||| %7.3f |  %7.3f  |   %7.3f   |  %7.3f  | %7.3f | %7.3f |", global_left_calibration, global_left_velocity, global_left_target, global_left_error, global_left_pid_delta, global_left_duty, global_right_calibration,global_right_velocity, global_right_target, global_right_error, global_right_pid_delta, global_right_duty);
+        //printf("\033[2A\r|   l_cal |   l_speed |   l_target  |   l_error |   l_pid |   l_cmd |||   r_cal |   r_speed |   r_target  |   r_error |   r_pid |   r_cmd |\n\r| %7.3f |  %7.3f  |   %7.3f   |  %7.3f  | %7.3f | %7.3f ||| %7.3f |  %7.3f  |   %7.3f   |  %7.3f  | %7.3f | %7.3f |", global_left_calibration, global_left_velocity, global_left_target, global_left_error, global_left_pid_delta, global_left_duty, global_right_calibration,global_right_velocity, global_right_target, global_right_error, global_right_pid_delta, global_right_duty);
         
         // print for odometry
-        printf("\033[2A\r|      SENSORS      |           ODOMETRY          |     SETPOINTS     |\n\r|  L_ENC  |  R_ENC  |    X    |    Y    |    θ    |   FWD   |   ANG   \n\r|%7lld  |%7lld  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |", current_encoders.leftticks, current_encoders.rightticks, current_odom.x, current_odom.y, current_odom.theta, current_cmd.trans_v, current_cmd.angular_v);
+        //printf("\033[2A\r|      SENSORS      |           ODOMETRY          |     SETPOINTS     |\n\r|  L_ENC  |  R_ENC  |    X    |    Y    |    θ    |   FWD   |   ANG   \n\r|%7lld  |%7lld  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |%7.3f  |", current_encoders.leftticks, current_encoders.rightticks, current_odom.x, current_odom.y, current_odom.theta, current_cmd.trans_v, current_cmd.angular_v);
     }
 }
 
