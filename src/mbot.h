@@ -26,6 +26,11 @@
 // who is using the code
 #define USER "Joe"
 
+#define CORRECTION_L 1.01
+#define CORRECTION_R 0.99
+#define CORRECTION_DELTA_D 1.04
+#define CORRECTION_THETA 0.98
+
 #define ENCODER_RESOLUTION 20.0
 #define GEAR_RATIO 78.0
 #define SLOWEST_SPEED 0.001
@@ -128,18 +133,18 @@ rc_filter_t setpoint_left_lowpass;
 rc_filter_t setpoint_right_lowpass;
 
 pid_parameters_t left_pid_params = {
-    .kp = 0.025,
+    .kp = 0.015,
     .ki = 0.035,
-    .kd = 0.0,
+    .kd = 0.0008,
     .dFilterHz = 25.0,
 };
 #define left_pid_max 0.5
 #define left_pid_min -0.5
 
 pid_parameters_t right_pid_params = {
-    .kp = 0.025,
+    .kp = 0.02,
     .ki = 0.035,
-    .kd = 0.0,
+    .kd = 0.0001,
     .dFilterHz = 25.0,
 };
 #define right_pid_max 0.5

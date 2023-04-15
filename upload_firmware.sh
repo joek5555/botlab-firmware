@@ -12,13 +12,12 @@ read script_name
 sudo picotool load -f $script_name 
 sudo picotool reboot
 
-pkill timesync
-pkill pico_shim
+sudo pkill timesync
+sudo pkill pico_shim
 
 echo "Please unplug and plug in the Pico USB" 
 read -p "Press enter to continue"
 
 cd /home/pi/botlab-w-23/system_compilation/bin
 ./timesync &
-./pico_shim &
-echo "Press enter to finish"
+sudo ./pico_shim &
